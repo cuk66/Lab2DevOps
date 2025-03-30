@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      
+  web:
+    build: .
+    container_name: django
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - static_data:/app/staticfiles
+#    environment:
+#      - DJANGO_SUPERUSER_USERNAME=admin
+#      - DJANGO_SUPERUSER_PASSWORD=admin
+#      - DJANGO_SUPERUSER_EMAIL=admin@example.com
+#    command: sh -c 'python manage.py migrate &&
+#         python manage.py shell -c "from django.contrib.auth import get_user_model;
+#         User = get_user_model();
+#         User.objects.filter(username=\"admin\").exists() or
+#         User.objects.create_superuser(\"admin\", \"admin@example.com\", \"admin\")" &&
+#         python manage.py collectstatic --noinput &&
+#         python manage.py runserver 0.0.0.0:8000'
+volumes:
+  postgres_data:
+  static_data:
